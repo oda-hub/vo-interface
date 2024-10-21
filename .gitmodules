@@ -1,0 +1,3 @@
+[submodule "cdci-data-analysis"]
+	path = cdci_data_analysis
+	url = https://github.com/oda-hub/dispatcher-app.git
