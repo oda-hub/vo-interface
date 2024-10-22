@@ -1,34 +1,41 @@
 version ?= $(shell git describe --always)
-version_sortable ?= $(shell git log -1 --format="%at" | xargs -I{} date -d @{} +%y%m%d-%H%M%S)
 
-image=odahub/vo-interface:$(version)
-image_sortable=odahub/vo-interface:$(version_sortable)
-image_latest=odahub/vo-interface:latest
+IMAGE=odahub/vo-interface:$(version)
+IMAGE_LATEST=odahub/vo-interface:latest
+
+DISPATCHER_CONFIG_DIR?="$(PWD)/conf"
+DISPATCHER_CONFIG_FILE?="/dispatcher/conf/conf.d/osa_data_server_conf.yml"
 
 run: build
 	docker run \
 		-it \
-		-u $(shell id -u) \
 		-v /tmp/dev/log:/var/log/containers \
 		-v /tmp/dev/workdir:/data/dispatcher_scratch \
-		-v $(PWD)/conf:/dispatcher/conf \
-		-e DISPATCHER_CONFIG_FILE=/dispatcher/conf/conf.d/osa_data_server_conf.yml \
+		-v $(DISPATCHER_CONFIG_DIR):/dispatcher/conf/conf.d \
 		-e DISPATCHER_GUNICORN=yes \
+		-e DISPATCHER_CONFIG_FILE=$(DISPATCHER_CONFIG_FILE) \
 		--rm \
 		-p 8010:8000 \
 		--name dev-oda-dispatcher \
-		$(image) 
+		$(IMAGE) 
 
 run-local: build
 		docker run \
 			-it \
-			-u $(shell id -u) \
 			-v /tmp/dev/log:/var/log/containers \
 			-v /tmp/dev/workdir:/data/dispatcher_scratch \
-			-v $(PWD)/conf:/dispatcher/conf \
-			-e DISPATCHER_CONFIG_FILE=/dispatcher/conf/conf.d/osa_data_server_conf.yml \
+			-v $(DISPATCHER_CONFIG_DIR):/dispatcher/conf/conf.d \
 			-e DISPATCHER_GUNICORN=no \
+			-e DISPATCHER_CONFIG_FILE=$(DISPATCHER_CONFIG_FILE) \
 			--rm \
 			-p 8010:8000 \
 			--name dev-oda-dispatcher \
-			$(image) 
+			$(IMAGE) 
+
+build: Dockerfile
+	docker build . -t $(IMAGE)
+	docker build . -t $(IMAGE_LATEST)
+
+build-no-cache: Dockerfile
+	docker build . --no-cache -t $(IMAGE)
+	docker build . --no-cache -t $(IMAGE_LATEST)
