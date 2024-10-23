@@ -11,13 +11,16 @@ ENV DISPATCHER_CONFIG_FILE=/dispatcher/conf/conf.d/osa_data_server_conf.yml
 ADD requirements.txt /requirements.txt
 ADD cdci_data_analysis /cdci_data_analysis
 
+RUN yum -y install epel-release
+RUN yum -y update
+RUN yum -y install postgresql-devel
+
 RUN source /init.sh && \
 	pip install pip --upgrade && \
     pip install -r /requirements.txt \
                 /cdci_data_analysis
 
 USER root
-
 RUN mkdir -pv $HOME
 RUN adduser --uid ${NB_UID} ${NB_USER}
 RUN chown -R ${NB_UID}:${NB_UID} ${HOME}

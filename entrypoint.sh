@@ -7,8 +7,6 @@ ls -tlroa /var/log/containers/
 
 
 (
-    id
-    whoami
     export HOME_OVERRRIDE=$PWD/runtime-home
     if [ ! -d "$HOME_OVERRRIDE" ]; then
         echo -e "\033[31mHOME_OVERRRIDE $HOME_OVERRRIDE to be created\033[0m"

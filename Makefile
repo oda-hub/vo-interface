@@ -9,26 +9,21 @@ DISPATCHER_CONFIG_FILE?="/dispatcher/conf/conf.d/osa_data_server_conf.yml"
 run: build
 	docker run \
 		-it \
-		-v /tmp/dev/log:/var/log/containers \
-		-v /tmp/dev/workdir:/data/dispatcher_scratch \
 		-v $(DISPATCHER_CONFIG_DIR):/dispatcher/conf/conf.d \
 		-e DISPATCHER_GUNICORN=yes \
 		-e DISPATCHER_CONFIG_FILE=$(DISPATCHER_CONFIG_FILE) \
 		--rm \
-		-p 8010:8000 \
 		--name dev-oda-dispatcher \
 		$(IMAGE) 
 
 run-local: build
 		docker run \
 			-it \
-			-v /tmp/dev/log:/var/log/containers \
-			-v /tmp/dev/workdir:/data/dispatcher_scratch \
 			-v $(DISPATCHER_CONFIG_DIR):/dispatcher/conf/conf.d \
 			-e DISPATCHER_GUNICORN=no \
 			-e DISPATCHER_CONFIG_FILE=$(DISPATCHER_CONFIG_FILE) \
+			--network=host \
 			--rm \
-			-p 8010:8000 \
 			--name dev-oda-dispatcher \
 			$(IMAGE) 
 
