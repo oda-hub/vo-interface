@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-oda-dispatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev-oda-dispatcher
+  template:
+    metadata:
+      labels:
+        app: dev-oda-dispatcher
+    spec:
+      containers:
+      - name: dev-oda-dispatcher
+        image: odahub/vo-interface:latest
+        imagePullPolicy: Never  # or IfNotPresent
+        env:
+        - name: DISPATCHER_GUNICORN
+          value: "no"
+        - name: DISPATCHER_CONFIG_FILE
+          value: "/dispatcher/conf/conf.d/osa_data_server_conf.yml"
+        volumeMounts:
+        - name: dispatcher-config
+          mountPath: /dispatcher/conf/conf.d
+      volumes:
+      - name: dispatcher-config
+        hostPath:
+          path: $(DISPATCHER_CONFIG_DIR)
