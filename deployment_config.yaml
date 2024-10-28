@@ -16,6 +16,8 @@ spec:
       - name: dev-oda-dispatcher
         image: odahub/vo-interface:latest
         imagePullPolicy: Never  # or IfNotPresent
+        ports:
+        - containerPort: 8001
         env:
         - name: DISPATCHER_GUNICORN
           value: "no"
