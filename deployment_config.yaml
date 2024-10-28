@@ -30,17 +30,3 @@ spec:
       - name: dispatcher-config
         hostPath:
           path: /dispatcher/conf/conf.d
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: dev-oda-dispatcher-service
-  labels:
-    run: dev-oda-dispatcher
-spec:
-  ports:
-  - port: 80
-    targetPort: 8001
-    protocol: TCP
-  selector:
-    run: dev-oda-dispatcher
