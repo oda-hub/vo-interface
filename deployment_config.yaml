@@ -29,4 +29,4 @@ spec:
       volumes:
       - name: dispatcher-config
         hostPath:
-          path: $(DISPATCHER_CONFIG_DIR)
+          path: /dispatcher/conf/conf.d
