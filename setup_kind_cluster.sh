@@ -8,9 +8,6 @@ nodes:
     extraMounts:
       - hostPath: ${DISPATCHER_CONFIG_DIR}
         containerPath: /dispatcher/conf/conf.d
-    extraPortMappings:
-      - containerPort: 8001
-        hostPort: 8080
 EOF
 
 kind create cluster --config kind_cluster_config.yml
