@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dev-oda-dispatcher
+      run: dev-oda-dispatcher
   template:
     metadata:
       labels:
-        app: dev-oda-dispatcher
+        run: dev-oda-dispatcher
     spec:
       containers:
       - name: dev-oda-dispatcher
@@ -28,3 +28,17 @@ spec:
       - name: dispatcher-config
         hostPath:
           path: /dispatcher/conf/conf.d
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-oda-dispatcher-service
+  labels:
+    run: dev-oda-dispatcher
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+    protocol: TCP
+  selector:
+    run: dev-oda-dispatcher
