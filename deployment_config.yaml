@@ -24,10 +24,27 @@ spec:
         volumeMounts:
         - name: dispatcher-config
           mountPath: /dispatcher/conf/conf.d
+      - name: dispatcher-postgresql
+        image: odahub/dispatcher-postgresql:latest
+        imagePullPolicy: Never  # or IfNotPresent
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        # TODO: What is the best approach to pass the password? In theory, it is available inside the confgiuration file of the dispatcher
+        - name: POSTGRES_PASSWORD
+          value: ""
+        - name: POSTGRES_DB
+          value: "gallery_dev_prod_no_views"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
       volumes:
       - name: dispatcher-config
         hostPath:
           path: /dispatcher/conf/conf.d
+      - name: postgres-data
+        hostPath:
+          path: /postgres_data
 ---
 apiVersion: v1
 kind: Service
