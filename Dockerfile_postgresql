@@ -1,8 +1,15 @@
 # Use the official PostgreSQL 16.4 image as the base image
 FROM postgres:16.4-bullseye
 
-RUN apt-get update && apt-get install -y build-essential software-properties-common
-RUN apt-get update && apt-get install -y vim git make gcc-9 postgresql-server-dev-16 bison byacc && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y vim \
+                                         build-essential \ 
+                                         software-properties-common \
+                                         git \
+                                         make \
+                                         gcc-9 \
+                                         postgresql-server-dev-16 \
+                                         bison \
+                                         byacc
 
 # Install the PostgreSQL extension for pgsphere
 RUN git clone --branch aiprdbms16 https://github.com/kimakan/pgsphere.git /pgsphere
