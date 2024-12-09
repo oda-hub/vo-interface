@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y vim \
                                          gcc-9 \
                                          postgresql-server-dev-16 \
                                          bison \
-                                         byacc
+                                         byacc \
+                                         clang-13
 
 # Install the PostgreSQL extension for pgsphere
 RUN git clone --branch aiprdbms16 https://github.com/kimakan/pgsphere.git /pgsphere
@@ -18,3 +19,6 @@ RUN cd /pgsphere && \
     make USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config
 RUN cd /pgsphere && \
     make USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config install
+
+# Install the pgloader from the official repository
+RUN git clone https://github.com/dimitri/pgloader.git /pgloader
