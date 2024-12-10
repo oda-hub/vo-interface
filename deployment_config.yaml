@@ -60,7 +60,7 @@ metadata:
 spec:
   ports:
   - port: 8001
-    targetPort: 8001
+    targetPort: http
     protocol: TCP
   selector:
     run: dev-oda-dispatcher
