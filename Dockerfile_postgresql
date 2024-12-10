@@ -20,7 +20,4 @@ RUN cd /pgsphere && \
 RUN cd /pgsphere && \
     make USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config install
 
-# Install the pgloader from the official repository
-RUN git clone https://github.com/dimitri/pgloader.git /pgloader
-
 COPY entrypoint_postgresql.sh /docker-entrypoint-initdb.d/entrypoint_postgresql.sh
