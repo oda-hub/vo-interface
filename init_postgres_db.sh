@@ -27,3 +27,12 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     SET search_path = mmoda_pg_prod, public;
     CREATE EXTENSION pg_sphere;
 EOSQL
+
+cd /
+
+# get the pgloader tool and use it to load the data from the gallery DB onto the Postgres DB
+git clone https://github.com/dimitri/pgloader.git /pgloader
+
+cd /pgloader && \
+    ./build/bin/pgloader mysql://$GALLERY_DB_USER:$GALLERY_DB_PASS@$GALLERY_DB_HOST:$GALLERY_DB_PORT/gallery
+                         postgresql://$POSTGRES_USER:$POSTGRES_PASS@localhost/mmoda_pg_prod
