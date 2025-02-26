@@ -35,4 +35,4 @@ git clone https://github.com/dimitri/pgloader.git /pgloader
 
 cd /pgloader && \
     ./build/bin/pgloader mysql://$GALLERY_DB_USER:$GALLERY_DB_PASSWORD@$GALLERY_DB_HOST:$GALLERY_DB_PORT/gallery
-                         postgresql://$POSTGRES_USER:$POSTGRES_PASS@localhost/mmoda_pg_prod
+                         postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST/mmoda_pg_prod
