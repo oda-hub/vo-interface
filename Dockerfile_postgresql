@@ -1,5 +1,4 @@
 # Use the official PostgreSQL 16.4 image as the base image
-# FROM postgres:16.4-bullseye
 FROM  bitnami/postgresql:16.4.0-debian-12-r28
 
 USER root
