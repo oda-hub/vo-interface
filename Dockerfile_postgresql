@@ -12,19 +12,25 @@ RUN apt-get update && apt-get install -y vim \
                                          postgresql-server-dev-all \
                                          bison \
                                          byacc \
-                                         clang-13
+                                         clang-13 \
+                                         sbcl \
+                                         curl \
+                                         gawk \ 
+                                         freetds-dev \
+                                         libzip-dev
 
                                          
-# Install the PostgreSQL extension for pgsphere
+# Install the PostgreSQL extension for pgsphere, getting a specific version from a specific branch
 RUN git clone --branch aiprdbms16 https://github.com/kimakan/pgsphere.git /pgsphere
                                          
-
 RUN cd /pgsphere && \
 make USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config
 RUN cd /pgsphere && \
 make USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config install
 
-# get the pgloader tool and use it to load the data from the gallery DB onto the Postgres DB
+# Install the pgloader tool, to use it to load the data from a MySQL DB onto a Postgres DB
 RUN git clone https://github.com/dimitri/pgloader.git /pgloader
+
+RUN cd /pgloader && make save 
 
 USER 1001
