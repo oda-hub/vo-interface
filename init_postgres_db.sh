@@ -16,7 +16,7 @@ cd /pgloader && \
     ./build/bin/pgloader mysql://$GALLERY_DB_USER:$GALLERY_DB_PASSWORD@$GALLERY_DB_HOST:$GALLERY_DB_PORT/$GALLERY_DB_NAME \
                          postgresql://$POSTGRESQL_USER:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DB_NAME
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME  <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-EOSQL
     -- Create the view
     CREATE VIEW $POSTGRESQL_DB_SCHEMA.data_product_table_view_v AS
     SELECT 
@@ -41,8 +41,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME  <<
         string_agg(node__field_obsid.field_obsid_value::text, ', ') AS proposal_id,
         string_agg(node__field_source_name.field_source_name_value::text, ', ') AS sources,
         string_agg(node__field_fits_file.field_fits_file_target_id::text, ', ') AS file_target_id,
-        string_agg(file_managed.filename::text, ', ') AS file_name,
-        string_agg(SUBSTRING(file_managed.uri FROM 10), ', ') AS file_uri
+        string_agg(f_m_1.filename::text, ', ') AS file_name,
+        string_agg(SUBSTRING(f_m_1.uri FROM 10), ', ') AS file_uri,
+        string_agg(f_m_2.filename::text, ', ') AS image_name,
+        string_agg(SUBSTRING(f_m_2.uri FROM 10), ', ') AS image_uri
     FROM
         node_field_data
         LEFT JOIN node__field_time_bin ON node_field_data.nid = node__field_time_bin.entity_id
@@ -66,7 +68,9 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME  <<
         LEFT JOIN node__field_source_name ON sources.nid = node__field_source_name.entity_id
         LEFT JOIN path_alias ON path_alias.path::text LIKE ('/node/'::text || node_field_data.nid::text)
         LEFT JOIN node__field_fits_file ON node_field_data.nid = node__field_fits_file.entity_id
-        LEFT JOIN file_managed ON node__field_fits_file.field_fits_file_target_id = file_managed.fid
+        LEFT JOIN file_managed AS f_m_1 ON node__field_fits_file.field_fits_file_target_id = f_m_1.fid
+        LEFT JOIN node__field_image_png ON node_field_data.nid = node__field_image_png.entity_id
+        LEFT JOIN file_managed AS f_m_2 ON node__field_image_png.field_image_png_target_id = f_m_2.fid
     WHERE
         node_field_data.status = '1'::smallint
         AND node_field_data.type::text = 'data_product'::text
