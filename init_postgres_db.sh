@@ -18,7 +18,7 @@ cd /pgloader && \
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME  <<-EOSQL
     -- Create the view
-    CREATE VIEW data_product_table_view_v AS
+    CREATE VIEW $POSTGRESQL_DB_SCHEMA.data_product_table_view_v AS
     SELECT 
         node_field_data.nid AS nid,
         node_field_data.title AS title,
