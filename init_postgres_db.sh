@@ -17,10 +17,11 @@ cd /pgloader && \
                          postgresql://$POSTGRESQL_USER:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DB_NAME
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-EOSQL
+    -- set again the search-path
+    SET search_path = $POSTGRESQL_DB_SCHEMA, public;
     -- Create the view
     CREATE VIEW $POSTGRESQL_DB_SCHEMA.data_product_table_view_v AS
     SELECT 
-        node_field_data.nid AS nid,
         node_field_data.title AS title,
         path_alias.alias AS path_alias,
         path_alias.path AS path,
@@ -40,7 +41,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
         node__field_timerange.field_timerange_end_value AS timerange_end,
         string_agg(node__field_obsid.field_obsid_value::text, ', ') AS proposal_id,
         string_agg(node__field_source_name.field_source_name_value::text, ', ') AS sources,
-        string_agg(node__field_fits_file.field_fits_file_target_id::text, ', ') AS file_target_id,
         string_agg(f_m_1.filename::text, ', ') AS file_name,
         string_agg(SUBSTRING(f_m_1.uri FROM 10), ', ') AS file_uri,
         string_agg(f_m_2.filename::text, ', ') AS image_name,
