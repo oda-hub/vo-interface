@@ -35,8 +35,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
         tax1.description__value AS instrument_description_value,
         tax2.name AS product_type_name,
         tax2.description__value AS product_type_description_value,
-        node__field_rev1.field_rev1_value AS rev1,
-        node__field_rev2.field_rev2_value AS rev2,
         node__field_timerange.field_timerange_value AS timerange,
         node__field_timerange.field_timerange_end_value AS timerange_end,
         string_agg(node__field_obsid.field_obsid_value::text, ', ') AS proposal_id,
@@ -59,8 +57,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
         LEFT JOIN taxonomy_term_field_data tax2 ON node__field_data_product_type.field_data_product_type_target_id = tax2.tid
         LEFT JOIN node__field_derived_from_observation ON node_field_data.nid = node__field_derived_from_observation.entity_id
         LEFT JOIN node_field_data obs ON obs.nid = node__field_derived_from_observation.field_derived_from_observation_target_id
-        LEFT JOIN node__field_rev1 ON obs.nid = node__field_rev1.entity_id
-        LEFT JOIN node__field_rev2 ON obs.nid = node__field_rev2.entity_id
         LEFT JOIN node__field_timerange ON obs.nid = node__field_timerange.entity_id
         LEFT JOIN node__field_obsid ON obs.nid = node__field_obsid.entity_id
         LEFT JOIN node__field_describes_astro_entity ON node_field_data.nid = node__field_describes_astro_entity.entity_id
@@ -89,8 +85,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
         tax1.description__value, 
         tax2.name, 
         tax2.description__value, 
-        node__field_rev1.field_rev1_value, 
-        node__field_rev2.field_rev2_value, 
         node__field_timerange.field_timerange_value, 
         node__field_timerange.field_timerange_end_value;
 EOSQL
