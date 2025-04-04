@@ -39,9 +39,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
         node__field_timerange.field_timerange_end_value AS timerange_end,
         string_agg(node__field_obsid.field_obsid_value::text, ', ') AS proposal_id,
         string_agg(node__field_source_name.field_source_name_value::text, ', ') AS sources,
-        string_agg(f_m_1.filename::text, ', ') AS file_name,
         string_agg(SUBSTRING(f_m_1.uri FROM 10), ', ') AS file_uri,
-        string_agg(f_m_2.filename::text, ', ') AS image_name,
         string_agg(SUBSTRING(f_m_2.uri FROM 10), ', ') AS image_uri
     FROM
         node_field_data
@@ -70,6 +68,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-
     WHERE
         node_field_data.status = '1'::smallint
         AND node_field_data.type::text = 'data_product'::text
+        AND f_m_1.fid IS NOT NULL 
+        AND f_m_2.fid IS NOT NULL
     GROUP BY 
         node_field_data.nid, 
         node_field_data.title, 
