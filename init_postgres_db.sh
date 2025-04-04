@@ -8,7 +8,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" <<-EOSQL
 	CREATE DATABASE $POSTGRESQL_DB_NAME;
     \c $POSTGRESQL_DB_NAME;
     CREATE SCHEMA IF NOT EXISTS $POSTGRESQL_DB_SCHEMA;
-    SET search_path = $POSTGRESQL_DB_SCHEMA, public;
+    ALTER DATABASE $POSTGRESQL_DB_NAME SET search_path = $POSTGRESQL_DB_SCHEMA, public;
     CREATE EXTENSION pg_sphere;
 EOSQL
 
@@ -17,8 +17,6 @@ cd /pgloader && \
                          postgresql://$POSTGRESQL_USER:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DB_NAME
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USER" -d $POSTGRESQL_DB_NAME <<-EOSQL
-    -- set again the search-path
-    SET search_path = $POSTGRESQL_DB_SCHEMA, public;
     -- Create the view
     CREATE VIEW $POSTGRESQL_DB_SCHEMA.data_product_table_view_v AS
     SELECT 
