@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-oda-dispatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: dev-oda-dispatcher
+  template:
+    metadata:
+      labels:
+        run: dev-oda-dispatcher
+    spec:
+      containers:
+      - name: dev-oda-dispatcher
+        image: odahub/vo-interface:latest
+        imagePullPolicy: Never  # or IfNotPresent
+        env:
+        - name: DISPATCHER_GUNICORN
+          value: "no"
+        - name: DISPATCHER_CONFIG_FILE
+          value: "/dispatcher/conf/conf.d/osa_data_server_conf.yml"
+        volumeMounts:
+        - mountPath: /dispatcher/conf/conf.d/osa_data_server_conf.yml
+          name: dispatcher-conf-secret
+          subPath: osa_data_server_conf.yml
+          readOnly: true
+      - name: dispatcher-postgresql
+        image: odahub/dispatcher-postgresql:latest
+        imagePullPolicy: Never  # or IfNotPresent
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: dispatcher-postgresql
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dispatcher-postgresql
+              key: postgres-password
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: dispatcher-conf-secret
+        secret:
+          secretName: dispatcher-conf
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: dispatcher-postgresql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-oda-dispatcher-service
+  labels:
+    run: dev-oda-dispatcher
+spec:
+  ports:
+  - port: 8001
+    targetPort: http
+    protocol: TCP
+  selector:
+    run: dev-oda-dispatcher
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dispatcher-postgresql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
